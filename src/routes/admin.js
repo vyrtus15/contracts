@@ -9,7 +9,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const { start, end } = req.query;
 
-    const response = await getBestProfessions(start, end);
+    const response = await getBestProfessions({ start, end });
 
     res.json(response);
   })

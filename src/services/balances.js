@@ -1,6 +1,7 @@
+const { fn, col, Op } = require("sequelize");
 const {
   sequelize: {
-    models: { Profile },
+    models: { Profile, Contract, Job },
   },
 } = require("../model");
 
@@ -9,7 +10,7 @@ const addBalance = async (userId, payload) => {
 
   validateProfile(profile);
   validateBalance(payload);
-  validateDepositAmount(profile.balance, payload.amount);
+  await validateDepositAmount(profile.id, payload.amount);
 
   await Profile.increment(
     { balance: payload.amount },
@@ -34,8 +35,27 @@ const validateBalance = (payload) => {
   }
 };
 
-const validateDepositAmount = (current, deposit) => {
-  const maxDepositAmount = (current / 100) * 25; // 25% of current balance
+const validateDepositAmount = async (clientId, deposit) => {
+  const jobsToBePaid = await Contract.findAll({
+    raw: true,
+    attributes: ["ClientId", [fn("SUM", col("Jobs.price")), "amount"]],
+    group: "ClientId",
+    where: {
+      ClientId: clientId,
+    },
+    include: [
+      {
+        model: Job,
+        required: true,
+        where: {
+          paid: { [Op.or]: [false, null] },
+        },
+      },
+    ],
+  });
+
+  const amountToPayInTotal = jobsToBePaid[0]?.amount || 0;
+  const maxDepositAmount = (amountToPayInTotal / 100) * 25; // 25% of the total amount to pay
 
   if (maxDepositAmount < deposit) {
     throw new Error("Max deposit amount is " + maxDepositAmount);
