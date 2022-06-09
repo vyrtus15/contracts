@@ -37,13 +37,13 @@ const payJob = async (profileId, jobId) => {
     include: { all: true },
   });
   if (!job) {
-    throw new Error("Job not found");
+    throw new Error("NOT FOUND: Job not found");
   }
 
   const clientId = job.Contract.ClientId;
   const contractorId = job.Contract.ContractorId;
   if (clientId !== profileId) {
-    throw new Error("You are not the client of this job");
+    throw new Error("UNAUTHORIZED: You are not the client of this job");
   }
 
   await pay(clientId, contractorId, job);
@@ -67,10 +67,10 @@ const pay = async (clientId, contractorId, job) => {
     });
   } catch (error) {
     if (error.original.code === "SQLITE_CONSTRAINT") {
-      throw new Error("Not enough money");
+      throw new Error("BAD REQUEST: Not enough money");
     }
 
-    throw new Error("Something went wrong");
+    throw new Error("INTERNAL: Something went wrong");
   }
 };
 

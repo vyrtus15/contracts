@@ -1,5 +1,4 @@
 const { Op, col, fn, literal } = require("sequelize");
-
 const {
   sequelize: {
     models: { Profile, Job, Contract },
@@ -49,7 +48,7 @@ const getBestClients = async (options) => {
 };
 
 const topClientsByAmount = async (options) => {
-  const limit = options.limit && !isNaN(options.limit) ? options.limit : 2;
+  const limit = getLimit(options.limit);
 
   const clientsByAmount = await Contract.findAll({
     raw: true,
@@ -90,6 +89,11 @@ const joinClientsMetadata = (topClients, profiles) => {
   });
 
   return clients;
+};
+
+const getLimit = (limit) => {
+  // Value is present, is number and in range [0, 100]
+  return limit && !isNaN(limit) && limit > 0 && limit <= 100 ? limit : 2;
 };
 
 module.exports = { getBestProfessions, getBestClients };

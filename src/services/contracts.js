@@ -23,7 +23,7 @@ const getUserContractById = async (profileId, contractId) => {
   return contract;
 };
 
-const getUserContracts = async (profileId) => {
+const getUserActiveContracts = async (profileId) => {
   const contracts = await Contract.findAll({
     where: {
       [Op.or]: [
@@ -43,4 +43,4 @@ const getUserContracts = async (profileId) => {
   return contracts;
 };
 
-module.exports = { getUserContractById, getUserContracts };
+module.exports = { getUserContractById, getUserActiveContracts };

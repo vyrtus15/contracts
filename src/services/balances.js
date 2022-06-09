@@ -20,18 +20,18 @@ const addBalance = async (userId, payload) => {
 
 const validateProfile = (profile) => {
   if (!profile || profile.type !== "client") {
-    throw new Error("To deposit money target user should be a client");
+    throw new Error("BAD REQUEST: To deposit money target user should be a client");
   }
 };
 
 const validateBalance = (payload) => {
   const { amount } = payload;
   if (!amount || isNaN(amount)) {
-    throw new Error("Amount is required");
+    throw new Error("BAD REQUEST: Amount is required");
   }
 
   if (amount <= 0) {
-    throw new Error("Positive amount is required");
+    throw new Error("BAD REQUEST: Positive amount is required");
   }
 };
 
@@ -58,7 +58,7 @@ const validateDepositAmount = async (clientId, deposit) => {
   const maxDepositAmount = (amountToPayInTotal / 100) * 25; // 25% of the total amount to pay
 
   if (maxDepositAmount < deposit) {
-    throw new Error("Max deposit amount is " + maxDepositAmount);
+    throw new Error("BAD REQUEST: Max deposit amount is " + maxDepositAmount);
   }
 };
 

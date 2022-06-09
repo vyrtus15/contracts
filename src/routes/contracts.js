@@ -3,7 +3,7 @@ const { getProfile } = require("../middleware/getProfile");
 const { asyncHandler } = require("../middleware/asyncHandler");
 const {
   getUserContractById,
-  getUserContracts,
+  getUserActiveContracts,
 } = require("../services/contracts");
 
 const router = express.Router();
@@ -30,7 +30,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const { id: profileId } = req.profile;
 
-    const contracts = await getUserContracts(profileId);
+    const contracts = await getUserActiveContracts(profileId);
 
     res.json(contracts);
   })
